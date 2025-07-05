@@ -1,0 +1,11 @@
+{# 函数模板文件 #}
+def {{ function_name }}({{ params }}{% if return_type %} -> {{ return_type }}{% endif %}):
+    {% if docstring %}
+    """{{ docstring }}"""
+    {% else %}
+    """自动生成的函数"""
+    {% endif %}
+    {{ body|indent(4) if body else "pass" }}
+    
+    {# 特殊标记：用于AST修改定位 #}
+    # AST-MARKER: GENERATED_FUNCTION_END

@@ -1,0 +1,22 @@
+class {{ class_name }}{% if base_classes %}({{ base_classes }}){% endif %}:
+    """{{ docstring|default('自动生成的类') }}"""
+
+    {% for field in fields %}
+    {{ field.name }}: {{ field.type }} = {{ field.default }}
+    {% endfor %}
+
+    def __init__(self{{ constructor_params }}):
+        """初始化方法"""
+        {% for param in constructor_init %}
+        self.{{ param }} = {{ param }}
+        {% endfor %}
+
+    {% for method in methods %}
+    def {{ method.name }}(self{{ method.params }}):
+        """{{ method.docstring }}"""
+        {{ method.body|indent(8) }}
+
+    {% endfor %}
+
+    {# 特殊标记：用于AST修改定位 #}
+    # AST-MARKER: GENERATED_CLASS_END
