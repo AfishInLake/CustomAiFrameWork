@@ -3,10 +3,10 @@
 # @Time    : 2025/6/16 12:24
 # @Author  : afish
 # @File    : discovery.py
-import os
 import importlib.util
 import inspect
 from pathlib import Path
+
 from .base import Command
 
 

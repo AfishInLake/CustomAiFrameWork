@@ -4,7 +4,6 @@
 # @Author  : afish
 # @File    : base.py
 import argparse
-import os
 from abc import ABC, abstractmethod
 
 
