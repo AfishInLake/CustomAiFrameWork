@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+aiframework/Main.py
+aiframework/__init__.py
+aiframework/logger.py
+aiframework/manage.py
+aiframework/setup.py
+aiframework/template_manager.py
+rosai.egg-info/PKG-INFO
+rosai.egg-info/SOURCES.txt
+rosai.egg-info/dependency_links.txt
+rosai.egg-info/requires.txt
+rosai.egg-info/top_level.txt

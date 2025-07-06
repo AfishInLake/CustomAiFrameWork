@@ -1,0 +1,6 @@
+./.gitignore
+./task_cache
+./logs
+./.rosai
+./manage.py
+./.idea
