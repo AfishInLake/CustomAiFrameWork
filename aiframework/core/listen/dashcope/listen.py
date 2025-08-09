@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import signal
-import threading
 import queue
+import threading
 from typing import Any, Callable, Optional
 
 import dashscope
@@ -47,13 +46,10 @@ class RealTimeSpeechRecognition(SpeechRecognition):
         self._audio_thread: Optional[threading.Thread] = None
         self._audio_queue = queue.Queue()
 
-        # 信号处理
-        signal.signal(signal.SIGINT, self._signal_handler)
-
     def start_recognition(self):
         """启动语音识别服务"""
         if self.is_active:
-            logger.warning("语音识别已启动")
+            # logger.warning("语音识别已启动")
             return
 
         logger.info('初始化语音识别服务...')
@@ -192,6 +188,11 @@ class RealTimeSpeechRecognition(SpeechRecognition):
                 """错误回调"""
                 self.parent._handle_error(message)
 
+            def on_complete(self):
+                """识别完成回调"""
+                self.parent.stop_recognition()
+                logger.info("语音识别已结束")
+
         return RecognitionCallback(self)
 
     def _handle_recognition_result(self, result: RecognitionResult):
@@ -209,11 +210,11 @@ class RealTimeSpeechRecognition(SpeechRecognition):
                     self._result_callback(text)
 
                 # 自动暂停识别
-                self.pause_recognition()
+                self.resume_recognition()
                 logger.info(f"识别到完整句子: {text} (已暂停)")
-            else:
-                # 部分结果可用于实时显示
-                logger.debug(f"部分识别结果: {text}")
+            # else:
+            #     # 部分结果可用于实时显示
+                # logger.debug(f"部分识别结果: {text}")
 
     def _handle_error(self, message: str):
         """处理错误"""

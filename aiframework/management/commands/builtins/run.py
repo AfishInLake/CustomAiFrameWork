@@ -15,7 +15,6 @@ load_dotenv()
 from aiframework.conf.PackageSettingsLoader import SettingsLoader
 from aiframework.logger import logger
 from aiframework.management.base import Command
-from aiframework.Main import MainController
 
 
 class RunCommand(Command):
@@ -36,7 +35,10 @@ class RunCommand(Command):
             settings.API_KEY = os.getenv("DASHSCOPE_API_KEY")
             logger.load_settings(settings)
             logger.info(f"📁 使用项目路径: {project_path}")
-            controller = MainController(settings=settings)
+            # 使用统一初始化方法
+            from aiframework.controller.init import create_controller
+            controller = create_controller(settings)
+
             try:
                 controller.start()
                 logger.info("已启动")

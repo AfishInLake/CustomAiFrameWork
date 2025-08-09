@@ -53,7 +53,7 @@ class DashScope(LLMClientBase):
         当前系统信息:
         {detect_and_get_system_info()}
         """
-        logger.info(f"系统提示信息: {message}")
+        # logger.info(f"系统提示信息: {message}")
         self.message_manager.add_system_message(message)
 
     def get_response(self) -> ChatCompletion:
@@ -121,11 +121,24 @@ class DashScope(LLMClientBase):
                         function_output = function.perform(**arguments)
                     else:
                         function_output = function.perform()
-                    logger.info(f"工具调用结果: {function_output}")
+
+                    # 兼容处理：检查function_output是否为ActionResult对象
+                    # 如果是ActionResult对象，将其转换为字符串以便后续处理
+                    if hasattr(function_output, 'success') and isinstance(function_output.success, bool):
+                        # 处理ActionResult对象
+                        if function_output.success:
+                            # 成功情况下，优先使用data字段，如果没有则使用str表示
+                            output_str = str(function_output)
+                        else:
+                            # 失败情况下，提供错误信息
+                            output_str = str(function_output)
+                    else:
+                        # 处理普通字符串或其他类型
+                        output_str = str(function_output)
 
                     # 添加工具结果到历史
                     self.message_manager.add_tool_message(
-                        str(function_output),
+                        output_str,
                         tool_call.id
                     )
                 except Exception as e:
@@ -141,5 +154,4 @@ class DashScope(LLMClientBase):
         # 4. 添加最终AI回复
         if msg.content:
             logger.info(f"AI回复: {msg.content}")
-            print(f"AI回复: {msg.content}")
             self.message_manager.add_assistant_message(msg)

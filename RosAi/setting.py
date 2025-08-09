@@ -35,6 +35,7 @@ AIFRAMEWORK_DEFAULTS = {
     'NEED_RECOGNIZER': False,  # 禁止语音
     'COMMAND_MODE': True,  # 命令模式
     'SYSTEM_PROMPT': "你是叫小胖的AI助手，请使用中文进行对话。",
+    'INPUT_TYPE': 'audio'  # 可选类型  text/audio/image
 }
 # 日志配置
 LOGGING = {

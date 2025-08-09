@@ -60,7 +60,7 @@ export LLM_MODEL=qwen-plus
 ### 启动主程序
 
 ```bash
-python aiframework/Main.py
+python aiframework/main.py
 ```
 
 

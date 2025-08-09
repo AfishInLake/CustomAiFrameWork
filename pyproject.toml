@@ -1,7 +1,7 @@
 [project]
 name = "rosai"
 version = "0.1.0"
-description = "Add your description here"
+description = "一个可以快速搭建基于AI的语音助手的框架"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -12,7 +12,8 @@ dependencies = [
     "jinja2>=3.1.6",
     "dotenv>=0.9.9",
     "redis==6.2.0",
-    "psutil>=7.0.0"
+    "psutil>=7.0.0",
+    "loguru>=0.7.3",
 ]
 
 [tool.setuptools]

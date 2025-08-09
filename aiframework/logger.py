@@ -1,23 +1,20 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
 import sys
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from pathlib import Path
 
+from loguru import logger as _logger
 from aiframework.conf.PackageSettingsLoader import SettingsLoader, FrozenJSON as _FrozenJSON
 
 # 默认日志配置
 DEFAULT_LOGGING_CONFIG = {
     'ENABLED': True,
     'LOG_DIR': None,  # 默认不保存到文件
-    'LOG_FORMAT': "%(asctime)s - %(name)s - %(levelname)s - %(message)s [%(filename)s:%(lineno)d]",
-    'DATE_FORMAT': "%Y-%m-%d %H:%M:%S",
-    'ENCODING': 'utf-8',
+    'LOG_FORMAT': "<green>{time:YYYY-MM-DD HH:mm:ss}</green> - <cyan>{name}</cyan> - <level>{level}</level> - <level>{message}</level> [<cyan>{file}</cyan>:<cyan>{line}</cyan>]",
     'LEVEL': 'INFO',
-    'MAX_BYTES': 10 * 1024 * 1024,  # 10MB
+    'MAX_BYTES': "10 MB",  # 10MB
     'BACKUP_COUNT': 5,  # 保留5个备份文件
-    'WHEN': 'midnight',  # 每天午夜滚动日志
+    'ROTATION_TIME': '00:00',  # 每天午夜滚动日志
     'CONSOLE': True,  # 默认启用控制台输出
     'FILE': False,  # 默认不保存到文件
     'ERROR_FILE': False,  # 默认不单独保存错误日志
@@ -40,10 +37,8 @@ class ProjectLogger:
         if self._initialized:
             return
 
-        # 创建根日志记录器
-        self._logger = logging.getLogger("aiframework")
-        self._logger.setLevel(logging.DEBUG)
-        self._logger.propagate = False  # 防止传播到根日志记录器
+        # 移除默认的日志配置
+        _logger.remove()
 
         # 应用默认配置
         self._config = _FrozenJSON(DEFAULT_LOGGING_CONFIG)
@@ -56,7 +51,20 @@ class ProjectLogger:
         if config is None:
             config = {}
         merged_config = {**DEFAULT_LOGGING_CONFIG, **config}
+        # 转换 logging 格式字符串为 loguru 格式字符串
+        if 'LOG_FORMAT' in merged_config and '%(asctime)s' in merged_config['LOG_FORMAT']:
+            # 简单转换 logging 格式到 loguru 格式
+            format_str = merged_config['LOG_FORMAT']
+            format_str = format_str.replace('%(asctime)s', '<green>{time:YYYY-MM-DD HH:mm:ss}</green>')
+            format_str = format_str.replace('%(name)s', '<cyan>{name}</cyan>')
+            format_str = format_str.replace('%(levelname)s', '<level>{level}</level>')
+            format_str = format_str.replace('%(message)s', '<level>{message}</level>')
+            format_str = format_str.replace('%(filename)s', '<cyan>{file}</cyan>')
+            format_str = format_str.replace('%(lineno)d', '<cyan>{line}</cyan>')
+            merged_config['LOG_FORMAT'] = format_str
+
         self._config = _FrozenJSON(merged_config)
+        self._setup_handlers()
 
     def load_settings(self, settings: SettingsLoader):
         """从设置加载器加载配置"""
@@ -65,33 +73,22 @@ class ProjectLogger:
 
     def _setup_handlers(self):
         """配置日志处理器"""
-        # 清除现有处理器
-        for handler in self._logger.handlers[:]:
-            self._logger.removeHandler(handler)
+        # 移除所有现有的处理器
+        _logger.remove()
 
-        # 如果日志被禁用，直接返回
+        # 如果日志被禁用，添加一个空的sink
         if not self._config.ENABLED:
+            _logger.add(sys.stderr, level="CRITICAL")
             return
 
         # 控制台处理器
         if self._config.CONSOLE:
-            console_handler = logging.StreamHandler(sys.stdout)
-            console_handler.setLevel(self._logger.level)
-
-            # 使用彩色格式化器
-            if self._config.COLORED:
-                formatter = ColoredFormatter(
-                    self._config.LOG_FORMAT,
-                    self._config.DATE_FORMAT
+            _logger.add(
+                sys.stdout,
+                format=self._config.LOG_FORMAT,
+                level=self._config.LEVEL,
+                colorize=self._config.COLORED
                 )
-            else:
-                formatter = logging.Formatter(
-                    self._config.LOG_FORMAT,
-                    self._config.DATE_FORMAT
-                )
-
-            console_handler.setFormatter(formatter)
-            self._logger.addHandler(console_handler)
 
         # 文件处理器
         if self._config.FILE and self._config.LOG_DIR:
@@ -101,57 +98,34 @@ class ProjectLogger:
                 log_file = log_dir / "app.log"
 
                 # 文件处理器（按大小滚动）
-                file_handler = RotatingFileHandler(
-                    filename=log_file,
-                    maxBytes=self._config.MAX_BYTES,
-                    backupCount=self._config.BACKUP_COUNT,
-                    encoding=self._config.ENCODING
+                _logger.add(
+                    log_file,
+                    format=self._config.LOG_FORMAT,
+                    level="DEBUG",
+                    rotation=self._config.MAX_BYTES,
+                    retention=self._config.BACKUP_COUNT,
+                    encoding="utf-8"
                 )
-                file_handler.setLevel(logging.DEBUG)
-                file_formatter = logging.Formatter(
-                    self._config.LOG_FORMAT,
-                    self._config.DATE_FORMAT
-                )
-                file_handler.setFormatter(file_formatter)
-                self._logger.addHandler(file_handler)
 
                 # 错误日志处理器（按时间滚动）
                 if self._config.ERROR_FILE:
-                    error_handler = TimedRotatingFileHandler(
-                        filename=log_dir / "error.log",
-                        when=self._config.WHEN,
-                        backupCount=self._config.BACKUP_COUNT,
-                        encoding=self._config.ENCODING
+                    error_file = log_dir / "error.log"
+                    _logger.add(
+                        error_file,
+                        format=self._config.LOG_FORMAT,
+                        level="ERROR",
+                        rotation=self._config.ROTATION_TIME,
+                        retention=self._config.BACKUP_COUNT,
+                        encoding="utf-8"
                     )
-                    error_handler.setLevel(logging.ERROR)
-                    error_handler.setFormatter(file_formatter)
-                    self._logger.addHandler(error_handler)
 
             except Exception as e:
                 # 回退到控制台输出错误
                 sys.stderr.write(f"无法创建日志文件: {str(e)}\n")
 
     def __getattr__(self, name):
-        """将日志方法委托给内部日志记录器"""
-        return getattr(self._logger, name)
-
-
-class ColoredFormatter(logging.Formatter):
-    """带颜色的控制台日志格式化器"""
-
-    COLORS = {
-        'DEBUG': '\033[94m',  # 蓝色
-        'INFO': '\033[92m',  # 绿色
-        'WARNING': '\033[93m',  # 黄色
-        'ERROR': '\033[91m',  # 红色
-        'CRITICAL': '\033[95m'  # 紫色
-    }
-    RESET = '\033[0m'
-
-    def format(self, record):
-        """格式化日志记录并添加颜色"""
-        log_message = super().format(record)
-        return f"{self.COLORS.get(record.levelname, '')}{log_message}{self.RESET}"
+        """将日志方法委托给loguru logger"""
+        return getattr(_logger, name)
 
 
 # 创建全局日志实例

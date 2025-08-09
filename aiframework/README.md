@@ -58,7 +58,7 @@ export LLM_MODEL=qwen-plus
 ### Run the Project
 
 ```bash
-python aiframework/Main.py
+python aiframework/main.py
 ```
 By default, it starts in voice recognition mode. You can speak or type commands such as:
 
