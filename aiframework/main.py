@@ -2,6 +2,7 @@ import threading
 
 from aiframework.conf.PackageSettingsLoader import SettingsLoader
 from aiframework.core.listen.LLMProcessor import register_llm_processor
+from aiframework.core.mcp.client import MCPClientManager
 from aiframework.core.seek.seek import LLMClientBase
 from aiframework.infrastructure.Input.InputHandler import InputHandlerBase
 from aiframework.logger import logger
@@ -21,13 +22,17 @@ class MainController:
         self.event_bus = event_bus
         self.running = False
         self.main_thread = None
+        self.manager = MCPClientManager(self.package.settings.MCP_CONFIG)
         self.llm_client.set(
             api_key=self.package.API_KEY,
-            model=self.package.Model,
-            tool=self.package.settings.ACTION_REGISTRY
+            baseurl=self.package.Model,
+            mcp=self.manager,
         )
         register_llm_processor(self.event_bus, self.llm_client)
 
+        # print(manager.tool_list())
+        # result = manager.call_tool("browser_navigate", url="https://www.baidu.com/")
+        # print(f"Result: {result.content}")
     def start(self):
         if not self.running:
             self.running = True
@@ -41,6 +46,8 @@ class MainController:
             self.running = False
             if self.main_thread and self.main_thread != threading.current_thread():
                 self.main_thread.join()
+            self.manager.disconnect_all()
+            self.manager.stop()
             logger.info("AI已停止")
 
     def _main_loop(self):
@@ -64,5 +71,3 @@ class MainController:
             except KeyboardInterrupt:
                 logger.debug("捕获到键盘中断")
                 self.stop()
-            except Exception as e:
-                logger.error(f"处理用户输入时发生错误: {e}")

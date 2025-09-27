@@ -60,13 +60,14 @@
     <inspection_tool class="PyCompatibilityInspection" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES">
       <option name="ourVersions">
         <value>
-          <list size="6">
+          <list size="7">
             <item index="0" class="java.lang.String" itemvalue="3.12" />
             <item index="1" class="java.lang.String" itemvalue="3.8" />
             <item index="2" class="java.lang.String" itemvalue="3.9" />
             <item index="3" class="java.lang.String" itemvalue="3.10" />
             <item index="4" class="java.lang.String" itemvalue="3.7" />
             <item index="5" class="java.lang.String" itemvalue="3.6" />
+            <item index="6" class="java.lang.String" itemvalue="3.11" />
           </list>
         </value>
       </option>
@@ -74,7 +75,7 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="61">
+          <list size="72">
             <item index="0" class="java.lang.String" itemvalue="scipy" />
             <item index="1" class="java.lang.String" itemvalue="tensorboard" />
             <item index="2" class="java.lang.String" itemvalue="opencv-python" />
@@ -136,6 +137,17 @@
             <item index="58" class="java.lang.String" itemvalue="requests" />
             <item index="59" class="java.lang.String" itemvalue="Pillow" />
             <item index="60" class="java.lang.String" itemvalue="psutil" />
+            <item index="61" class="java.lang.String" itemvalue="dashscope" />
+            <item index="62" class="java.lang.String" itemvalue="pyaudio" />
+            <item index="63" class="java.lang.String" itemvalue="dotenv" />
+            <item index="64" class="java.lang.String" itemvalue="pydub" />
+            <item index="65" class="java.lang.String" itemvalue="eval_type_backport" />
+            <item index="66" class="java.lang.String" itemvalue="json5" />
+            <item index="67" class="java.lang.String" itemvalue="jsonlines" />
+            <item index="68" class="java.lang.String" itemvalue="djangorestframework-simplejwt" />
+            <item index="69" class="java.lang.String" itemvalue="django-filter" />
+            <item index="70" class="java.lang.String" itemvalue="django-cors-headers" />
+            <item index="71" class="java.lang.String" itemvalue="drf-yasg" />
           </list>
         </value>
       </option>
@@ -181,6 +193,8 @@
           <option value="Admin.admin.admin_views" />
           <option value="peopleinfo.management.commands.init.*" />
           <option value="rest_framework_simplejwt.tokens.Token.*" />
+          <option value="status" />
+          <option value="tensorflow.*" />
         </list>
       </option>
     </inspection_tool>

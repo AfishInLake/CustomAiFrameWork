@@ -21,7 +21,7 @@ class SpeechSynthesis(ABC):
         self.sample_rate = sample_rate
         self.voice = voice
 
-        # Initialize DashScope API key
+        # Initialize OpenAI API key
         if self.api_key:
             dashscope.api_key = self.api_key
         else:
@@ -48,7 +48,7 @@ class SpeechSynthesis(ABC):
 
 class RealTimeSpeechSynthesis(SpeechSynthesis):
     """
-    Implementation of real-time speech synthesis using DashScope TTS.
+    Implementation of real-time speech synthesis using OpenAI TTS.
     """
 
     def __init__(self, api_key=None, model='sambert-zhichu-v1', sample_rate=48000, voice='zhitian'):

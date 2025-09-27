@@ -4,6 +4,7 @@
 # @Author  : afish
 # @File    : __init__.py
 from .seek import LLMClientBase
+
 __all__ = [
-    'LLMClientBase'
+    'LLMClientBase',
 ]

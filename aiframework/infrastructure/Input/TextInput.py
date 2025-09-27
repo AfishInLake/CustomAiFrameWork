@@ -11,7 +11,12 @@ class TextInputHandler(InputHandlerBase):
         pass
 
     def read_input(self) -> str:
-        return input("请输入指令: ").strip()
+        try:
+            return input("请输入指令: ").strip()
+        except EOFError:
+            import logging
+            logging.getLogger(__name__).warning("输入流意外终止")
+            return ""
 
     def process(self) -> str:
         return self.read_input()

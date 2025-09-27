@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "url": "http://localhost:8931/mcp"
+    },
+    "excel": {
+      "url": "http://localhost:8017/mcp"
+    }
+  }
+}

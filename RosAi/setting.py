@@ -10,43 +10,24 @@ from aiframework.message.message import MessageManager
 # 项目路径
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-from RosAi.action import *
-
-__all__ = [
-    'CommandAction',
-    'NetworkPingAction',
-    'HTTPDownloadAction',
-    'ArchiveCompressAction',
-    'TextSearchAction',
-    'PythonPackageAction',
-    'ProcessMonitorAction',
-    'DiskUsageAction',
-    'FileHashAction'
-]
+# MCP配置文件路径
+MCP_CONFIG_PATH = os.path.join(BASE_DIR, 'RosAi', 'mcp_config.json')
 
 from RosAi.client import *
+
+# 从环境变量获取API密钥，如果没有则设置为空字符串
+API_KEY = os.getenv('API_KEY', '')
+Model = os.getenv('MODEL', 'qwen-plus')
 
 AIFRAMEWORK_DEFAULTS = {
     # 基础配置
     'NAME': 'windows',
     'LLM': WindowsAIAssistant,
     'MESSAGE_MANAGER': MessageManager,
-    'ACTIONS': __all__,
     'NEED_RECOGNIZER': False,  # 禁止语音
     'COMMAND_MODE': True,  # 命令模式
-    'SYSTEM_PROMPT': "你是叫小胖的AI助手，请使用中文进行对话。",
-    'INPUT_TYPE': 'audio'  # 可选类型  text/audio/image
-}
-# 日志配置
-LOGGING = {
-    'ENABLED': True,
-    'LOG_DIR': os.path.join(BASE_DIR, 'logs'),
-    'LOG_FILE': os.path.join(BASE_DIR, 'logs', 'app.log'),
-    'LOG_FORMAT': "%(asctime)s - %(name)s - %(levelname)s - %(message)s [%(filename)s:%(lineno)d]",
-    'DATE_FORMAT': "%Y-%m-%d %H:%M:%S",
-    'MAX_BYTES': 10 * 1024 * 1024,  # 10MB
-    'BACKUP_COUNT': 5,
-    'WHEN': 'midnight',
-    'ENCODING': 'utf-8',
-    'LEVEL': 'INFO',  # 可选 DEBUG/INFO/WARNING/ERROR
+    'SYSTEM_PROMPT': """
+    """,
+    'INPUT_TYPE': 'text',  # 可选类型  text/audio/image
+    'MCP_CONFIG_PATH': "G:\desktop\RosAi\RosAi\mcp_config.json"
 }

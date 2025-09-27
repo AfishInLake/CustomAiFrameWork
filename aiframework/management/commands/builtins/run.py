@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 import time
+import asyncio
 
 from dotenv import load_dotenv
 
@@ -33,15 +34,21 @@ class RunCommand(Command):
             settings = SettingsLoader(project_path)  # 读取自定义app的配置
             settings.Model = os.getenv("LLM_MODEL")
             settings.API_KEY = os.getenv("DASHSCOPE_API_KEY")
-            logger.load_settings(settings)
+            logger_config = settings.settings.to_dict()
+            logger.load_settings(logger_config)
+            logger.configure(logger_config)  # 确保logger完成配置
             logger.info(f"📁 使用项目路径: {project_path}")
+
             # 使用统一初始化方法
             from aiframework.controller.init import create_controller
+            logger.info("开始创建控制器")
             controller = create_controller(settings)
+            logger.info("控制器创建完成")
 
             try:
+                logger.info("启动控制器")
                 controller.start()
-                logger.info("已启动")
+                logger.info("控制器已启动")
                 while True:
                     time.sleep(1)
             except KeyboardInterrupt:

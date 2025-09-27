@@ -15,7 +15,7 @@ from aiframework.logger import logger
 
 class RealTimeSpeechRecognition(SpeechRecognition):
     """
-    DashScope 实时语音识别实现
+    OpenAI 实时语音识别实现
     """
 
     def __init__(self, api_key: str, model: str = 'paraformer-realtime-v2',
@@ -23,7 +23,7 @@ class RealTimeSpeechRecognition(SpeechRecognition):
         """
         初始化实时语音识别器
 
-        :param api_key: DashScope API密钥
+        :param api_key: OpenAI API密钥
         :param model: 识别模型 (默认: 'paraformer-realtime-v2')
         :param sample_rate: 音频采样率 (默认: 16000Hz)
         :param language: 识别语言 (默认: 'zh-CN')

@@ -5,6 +5,7 @@
 # @File    : seek.py
 import json
 from abc import ABC, abstractmethod
+from typing import Any
 
 from openai.types.chat import ChatCompletionMessage, ChatCompletion
 
@@ -13,7 +14,7 @@ class LLMClientBase(ABC):
     completion = None
 
     @abstractmethod
-    def set(self, api_key: str, model: str, tool: list):
+    def set(self, api_key: str, baseurl: str, mcp: Any, *args, **kwargs):
         raise ValueError("未提供大模型接口")
 
     @abstractmethod

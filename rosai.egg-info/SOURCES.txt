@@ -3,6 +3,7 @@ pyproject.toml
 aiframework/Main.py
 aiframework/__init__.py
 aiframework/logger.py
+aiframework/main.py
 aiframework/manage.py
 aiframework/setup.py
 aiframework/template_manager.py
