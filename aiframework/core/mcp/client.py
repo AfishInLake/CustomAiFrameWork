@@ -166,7 +166,10 @@ class MCPClientManager:
         self.tool_server_mapping = {}
         self._loop = asyncio.new_event_loop()  # 主事件循环
         self._thread = None  # 用于运行主事件循环的线程
-        self.connect_all()
+        try:
+            self.connect_all()
+        except Exception as e:
+            logger.error(f"MCPClientManager 初始化失败: {str(e)}")
 
     def start(self):
         """启动管理器的事件循环"""
@@ -202,12 +205,12 @@ class MCPClientManager:
         self.run_async(self._connect_all_async)
 
     async def _connect_all_async(self):
-        for server_name, server_config in self.config.items():
-            client = MCPClient(server_name, server_config['url'])
-            await client.connect()
-            await client.initialize()
-            self.clients[server_name] = client
-        self.initialize()
+            for server_name, server_config in self.config.items():
+                    client = MCPClient(server_name, server_config['url'])
+                    await client.connect()
+                    await client.initialize()
+                    self.clients[server_name] = client
+            self.initialize()
 
     def initialize(self):
         """注册工具名称和服务名称映射表"""
@@ -269,7 +272,7 @@ def main():
     print(manager.to_json())
     result = manager.call_tool("browser_navigate", url="https://www.baidu.com/")
     result = manager.call_tool('browser_take_screenshot')
-    print( result)
+    print(result)
     # print(f"Result: {result.content}")
     manager.disconnect_all()
     manager.stop()

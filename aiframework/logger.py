@@ -10,7 +10,7 @@ from typing import Any
 DEFAULT_LOGGING_CONFIG = {
     'ENABLED': True,
     'LOG_DIR': None,  # 默认不保存到文件
-    'LOG_FORMAT': "<green>{time:YYYY-MM-DD HH:mm:ss}</green> - <cyan>{name}</cyan> - <level>{level}</level> - <level>{message}</level> [<cyan>{file}</cyan>:<cyan>{line}</cyan>]",
+    'LOG_FORMAT': "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>  <level>{message}</level>",
     'LEVEL': 'INFO',
     'MAX_BYTES': "10 MB",  # 10MB
     'BACKUP_COUNT': 5,  # 保留5个备份文件
@@ -100,7 +100,7 @@ class ProjectLogger:
                 # 文件处理器（按大小滚动）
                 _logger.add(
                     log_file,
-                    format=self._config.LOG_FORMAT,
+                    format=self._config.get('LOG_FORMAT'),
                     level="DEBUG",
                     rotation=self._config.get('MAX_BYTES', '10 MB'),
                     retention=self._config.get('BACKUP_COUNT', 5),
@@ -112,7 +112,7 @@ class ProjectLogger:
                     error_file = log_dir / "error.log"
                     _logger.add(
                         error_file,
-                        format=self._config.LOG_FORMAT,
+                        format=self._config.get('LOG_FORMAT'),
                         level="ERROR",
                         rotation=self._config.get('ROTATION_TIME', '00:00'),
                         retention=self._config.get('BACKUP_COUNT', 5),
