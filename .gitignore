@@ -7,4 +7,5 @@
 ./.venv
 ./rosai.egg-info
 ./*.pyc
+.dev.env
 .env
