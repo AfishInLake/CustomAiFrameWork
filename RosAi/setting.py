@@ -24,6 +24,7 @@ AIFRAMEWORK_DEFAULTS = {
     'NAME': 'windows',
     'LLM': WindowsAIAssistant,
     'MESSAGE_MANAGER': MessageManager,
+    "Model": Model,
     'NEED_RECOGNIZER': False,  # 禁止语音
     'COMMAND_MODE': True,  # 命令模式
     'SYSTEM_PROMPT': """

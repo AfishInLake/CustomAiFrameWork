@@ -17,17 +17,22 @@ from aiframework.message.MessageABC import MessageManagerBase
 
 class OpenAIClient(LLMClientBase):
 
-    def __init__(self, system_prompt: str, MessageManager: MessageManagerBase):
+    def __init__(self, system_prompt: str, MessageManager: MessageManagerBase, *args, **kwargs):
+        self.model = None
         self.system_info = None
         self.completion = None
         self.mcp: Optional[MCPClientManager] = None
         self.client = None
-        self.model = "qwen-plus-2025-09-11"
+
         self.message_manager = MessageManager
         self.system_prompt = system_prompt
 
-    def set(self, api_key: str, baseurl: str, mcp: MCPClientManager, *args, **kwargs):
+
+
+    def set(self, api_key: str, baseurl: str, mcp: MCPClientManager, model="qwen-plus-2025-09-11", *args, **kwargs):
+        # TODO: 目前set函数结构设置不清晰，如果有新参数，添加不方便，待修复
         # 设置默认的DashScope API URL
+        self.model = model
         if not baseurl:
             baseurl = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
@@ -130,7 +135,6 @@ class OpenAIClient(LLMClientBase):
                     content=str(result),
                     tool_call_id=tool_call.id
                 )
-
 
             # 获取下一个响应（基于工具执行结果）
             msg = self.get_message()
