@@ -6,15 +6,15 @@
 from __future__ import annotations
 
 import importlib.util
-import sys
 import os
+import sys
 from collections import abc
 from pathlib import Path
 from pprint import pformat
 from typing import Any, Dict
 
-from aiframework.utils.decorate import singleton
 from aiframework.logger import logger
+from aiframework.utils.decorate import singleton
 
 DEFAULTS: Dict[str, Any] = {
     # 默认名称
@@ -52,7 +52,7 @@ class SettingsLoader:
             return
 
         self.API_KEY = None
-        self.Model = None
+        self.MODEL = None
         self.package_path = Path(package_path)
         self.__settings = {}
         self._original_settings = {}  # 保存原始未处理的数据
@@ -86,7 +86,7 @@ class SettingsLoader:
 
         # 获取模块变量并处理嵌套结构
         raw_settings = {k: v for k, v in vars(module).items() if not k.startswith('_')}
-        
+
         # 加载MCP配置
         import json
         mcp_config_path = raw_settings.get('MCP_CONFIG_PATH')
@@ -100,11 +100,11 @@ class SettingsLoader:
                 logger.error(f"加载MCP配置失败: {e}")
         else:
             logger.warning(f"MCP配置文件不存在: {mcp_config_path}")
-            
+
         # 设置API密钥和模型
         self.API_KEY = raw_settings.get('API_KEY', '')
-        self.Model = raw_settings.get('Model', 'qwen-plus')
-
+        self.MODEL = raw_settings.get('MODEL', 'qwen-plus')
+        self.LLM_MODEL = raw_settings.get('LLM_MODEL', 'https://dashscope.aliyuncs.com/compatible-mode/v1')
         self.__settings = raw_settings.copy()
 
         # 清除缓存的 FrozenJSON

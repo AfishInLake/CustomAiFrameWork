@@ -18,3 +18,4 @@ uv sync
 python manage.py run
 ```
 
+

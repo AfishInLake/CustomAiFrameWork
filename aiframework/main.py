@@ -25,14 +25,15 @@ class MainController:
         self.manager = MCPClientManager(self.package.settings.MCP_CONFIG)
         self.llm_client.set(
             api_key=self.package.API_KEY,
-            baseurl=self.package.Model,
+            baseurl=self.package.LLM_MODEL,
             mcp=self.manager,
+            model=self.package.MODEL
         )
         register_llm_processor(self.event_bus, self.llm_client)
 
-        # print(manager.tool_list())
-        # result = manager.call_tool("browser_navigate", url="https://www.baidu.com/")
-        # print(f"Result: {result.content}")
+        logger.info("当前启用模型:\n"
+                    f"model:{self.package.MODEL}\n"
+                    f"baseurl:{self.package.LLM_MODEL}")
     def start(self):
         if not self.running:
             self.running = True

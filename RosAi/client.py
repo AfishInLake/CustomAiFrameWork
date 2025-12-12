@@ -6,8 +6,8 @@ from aiframework.core.seek.OpenAI.seek import OpenAIClient
 
 
 class WindowsAIAssistant(OpenAIClient):
-    def __init__(self, system_prompt: str, MessageManager):
-        super().__init__(system_prompt, MessageManager)
+    def __init__(self, system_prompt: str, MessageManager, *args, **kwargs):
+        super().__init__(system_prompt, MessageManager,  *args, **kwargs)
         # 初始化系统信息
         self.system_info = self._get_system_info()
 

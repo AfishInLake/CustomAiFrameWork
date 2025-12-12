@@ -32,7 +32,8 @@ class RunCommand(Command):
             # 加载项目配置
             print("当前项目路径: %s" % project_path)
             settings = SettingsLoader(project_path)  # 读取自定义app的配置
-            settings.Model = os.getenv("LLM_MODEL")
+            settings.LLM_MODEL = os.getenv("LLM_MODEL")
+            settings.MODEL = os.getenv("MODEL")
             settings.API_KEY = os.getenv("DASHSCOPE_API_KEY")
             logger_config = settings.settings.to_dict()
             logger.load_settings(logger_config)
